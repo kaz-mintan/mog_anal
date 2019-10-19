@@ -9,6 +9,17 @@ import okao_func
 import numpy as np
 import cv2
 
+from datetime import datetime
+
+
+
+def tmp_log(array,now):
+    log_array = np.empty((1,array.shape[0]+5))
+    log_array[0,:array.shape[0]]=array
+    log_array[0,array.shape[0]:]=\
+    np.array([now.day,now.hour,now.minute,now.second,now.microsecond])
+    return log_array
+
 width = 320*3
 height = 240
 
@@ -76,6 +87,11 @@ for inputPath in sorted(glob.glob(inputDir + '*.png'), key=numericalSort):
   print(filename,hap[0,0,c],
       hap[1,0,c],
       hap[2,0,c])
+
+  with open('test_state.csv', 'a') as rf_handle:
+      np.savetxt(rf_handle,
+      #tmp_log(np.hstack((np.array([episode]),np.array([while_t]),tmp_state[:,0])),datetime.now()),fmt="%f",delimiter=",")
+      tmp_log(hap[:,0,c],datetime.now()),fmt="%f",delimiter=",")
 
   c = c +1
 
