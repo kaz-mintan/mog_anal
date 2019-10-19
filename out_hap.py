@@ -11,7 +11,11 @@ import cv2
 
 width = 320*3
 height = 240
-inputDir  = "/home/kazumi/prog/table_design/pic/az_test/"
+
+print("input dirname")
+inputDir = raw_input()
+
+#inputDir  = "/home/kazumi/prog/table_design/pic/az_test/"
 
 numbers = re.compile(r'(\d+)')
 
@@ -74,3 +78,5 @@ for inputPath in sorted(glob.glob(inputDir + '*.png'), key=numericalSort):
       hap[2,0,c])
 
   c = c +1
+
+#if __name__ == '__main__':
