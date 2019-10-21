@@ -11,9 +11,23 @@ import cv2
 
 from datetime import datetime
 
+def name2time(name_string):
+    min_str = name_string[-20:-18]
+    sec_str = name_string[-17:-15]
+    msec_str = name_string[-14:-9]
+    return int(min_str), int(sec_str), int(msec_str)
 
+def tmp_log(array,filename):
+    min_val,sec_val,msec_val = name2time(filename)
 
-def tmp_log(array,now):
+    log_array = np.empty((1,array.shape[0]+3))
+    log_array[0,:array.shape[0]]=array
+    log_array[0,array.shape[0]:]=\
+    np.array([min_val,sec_val,msec_val])
+
+    return log_array
+
+def time_log(array,now):
     log_array = np.empty((1,array.shape[0]+5))
     log_array[0,:array.shape[0]]=array
     log_array[0,array.shape[0]:]=\
@@ -57,10 +71,10 @@ for inputPath in sorted(glob.glob(inputDir + '*.png'), key=numericalSort):
 
   #cv2.imshow('show',frame)
   cv2.waitKey(1)
-  conf = np.zeros((3,13,2000))
-  hap = np.zeros((3,1,2000))
-  gaze = np.zeros((3,2,2000))
-  face_pt = np.zeros((3,8,2000))
+  conf = np.zeros((3,13,30000))
+  hap = np.zeros((3,1,30000))
+  gaze = np.zeros((3,2,30000))
+  face_pt = np.zeros((3,8,30000))
 
   #remove this comment out if you need output confidence and happy
   for i in range(3):
@@ -83,15 +97,20 @@ for inputPath in sorted(glob.glob(inputDir + '*.png'), key=numericalSort):
         okao_1.get_emotion(0)
 
         hap[i,0,c] = okao_1.ret_emo()[1]
+        conf[i,0,c] = int(np.average(okao_1.ret_conf()[:13])/10.0)
 
-  print(filename,hap[0,0,c],
+  print(name2time(filename),hap[0,0,c],
       hap[1,0,c],
-      hap[2,0,c])
+      hap[2,0,c],
+      conf[0,0,c],conf[1,0,c],conf[2,0,c])
 
-  with open('test_state.csv', 'a') as rf_handle:
+  with open('hap_out.csv', 'a') as rf_handle:
       np.savetxt(rf_handle,
-      #tmp_log(np.hstack((np.array([episode]),np.array([while_t]),tmp_state[:,0])),datetime.now()),fmt="%f",delimiter=",")
-      tmp_log(hap[:,0,c],datetime.now()),fmt="%f",delimiter=",")
+      tmp_log(hap[:,0,c],filename),fmt="%f",delimiter=",")
+
+  with open('conf_out.csv', 'a') as rf_handle:
+      np.savetxt(rf_handle,
+      tmp_log(conf[:,0,c],filename),fmt="%f",delimiter=",")
 
   c = c +1
 
