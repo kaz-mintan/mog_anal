@@ -5,6 +5,7 @@ import glob
 import re
 import os
 import okao_func
+import sys
 
 import numpy as np
 import cv2
@@ -37,14 +38,21 @@ def time_log(array,now):
 width = 320*3
 height = 240
 
-print("input dirname")
-inputDir = raw_input()
+'''
+inputDir = sys.argv
+if len(inputDir)<2:
+  print("input dirname")
+  raw_input()
+'''
 
+print(sys.argv[1])
+name = sys.argv[1]
+inputDir = "/media/kazumi/4b35d6ed-76bb-41f1-9d5d-197a4ff1a6ab/home/kazumi/mogura/" + str(name) + "/pic/"
 #inputDir  = "/home/kazumi/prog/table_design/pic/az_test/"
-
 numbers = re.compile(r'(\d+)')
 
 def numericalSort(value):
+  print("in")
   parts = numbers.split(value)
 
   parts[1::2] = map(int, parts[1::2])
